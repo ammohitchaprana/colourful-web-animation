@@ -11,12 +11,9 @@
 body {
     margin:0;
 }
-
-
 #canvas{
     background:#000;
     position:absolute ;
-    
 }
         </style>
     </head>
@@ -26,22 +23,16 @@ body {
 <script>
   window.onload = () =>{
     
-   
-    
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 canvas.height = window.innerHeight;//height
 canvas.width = window.innerWidth;// width
-
-
 
 // finger move tracker
 let mouse ={
     x: 50,
     y: 100
 }
-
-
 
 //creating Particle on finger move
 class Particle{
@@ -57,7 +48,6 @@ class Particle{
         this.opacity = 1;// alpha value of Particle 
         
     }
-    
     draw(c){ // function for draw particle
         c.save() 
         c.beginPath()
@@ -71,9 +61,6 @@ class Particle{
     update(){
        
        this.opacity -= 0.03 // use for decrese alpha value
-    
-    
-    
         this.x += this.vx; // moveing Particle on x axis
         this.y += this.vy; // moving Particle on y axis
          
@@ -92,13 +79,7 @@ class Particle{
              this.y = canvas.height - this.r
              this.vy *= -1;
          }
-         
-         
-        
     }
-    
-    
-    
 }
 
 //created by MCR
@@ -109,9 +90,6 @@ class Effect{
         this.width = this.canvas.width;
         this.particleHolder = [] // Particle holder
         this.particleCount = 3;// Particle every finger movement
-        
-        
-        
     }
      
        
