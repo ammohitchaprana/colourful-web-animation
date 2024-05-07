@@ -1,1 +1,241 @@
 
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Created By Sword </title>
+        <style>
+          *{
+    margin:0;
+    padding:0;
+}
+body {
+    margin:0;
+}
+
+
+#canvas{
+    background:#000;
+    position:absolute ;
+    
+}
+        </style>
+    </head>
+    <body>
+        <canvas id='canvas'></canvas>
+    </body>
+<script>
+  window.onload = () =>{
+    
+   
+    
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext('2d');
+canvas.height = window.innerHeight;//height
+canvas.width = window.innerWidth;// width
+
+
+
+// finger move tracker
+let mouse ={
+    x: 50,
+    y: 100
+}
+
+
+
+//creating Particle on finger move
+class Particle{
+    constructor(eft){
+        this.effect = eft;
+        this.r = Math.random() * 4 + 2;/// Particle random size
+        this.x = mouse.x // finger postion x
+        this.y = mouse.y // finger postion y
+        this.vx = (Math.random() - 0.5) * 7 // random x velocity
+        this.vy = (Math.random() - 0.5) * 7 // random y velocity
+        
+        this.style = `hsl(${Math.random() * 360}, 50%, 50%)`// random color
+        this.opacity = 1;// alpha value of Particle 
+        
+    }
+    
+    draw(c){ // function for draw particle
+        c.save() 
+        c.beginPath()
+        c.globalAlpha = this.opacity ;
+        
+        c.fillStyle = this.style 
+        c.arc(this.x, this.y, this.r, 0, Math.PI * 2)
+        c.fill()
+        c.restore()
+    }
+    update(){
+       
+       this.opacity -= 0.03 // use for decrese alpha value
+    
+    
+    
+        this.x += this.vx; // moveing Particle on x axis
+        this.y += this.vy; // moving Particle on y axis
+         
+         if(this.x < this.r){ /// function for checking if Particle is going outside of canvas
+             this.x = this.r;
+             this.vx *= -1;
+         }else if(this.x > canvas.width - this.r){
+             this.x = canvas.width - this.r
+             this.vx *= -1;
+         }
+         
+         if(this.y < this.r){
+             this.y = this.r;
+             this.vy *= -1;
+         }else if(this.y > canvas.height - this.r){
+             this.y = canvas.height - this.r
+             this.vy *= -1;
+         }
+         
+         
+        
+    }
+    
+    
+    
+}
+
+//created by MCR
+class Effect{
+    constructor(canvas){
+        this.canvas = canvas; 
+        this.height = this.canvas.height;
+        this.width = this.canvas.width;
+        this.particleHolder = [] // Particle holder
+        this.particleCount = 3;// Particle every finger movement
+        
+        
+        
+    }
+     
+       
+    
+    
+    
+    createParticle(){ // creating Particle on finger movement
+        for(let i = 0; i < this.particleCount ;i++){
+            this.particleHolder.push(new Particle(this));
+        }
+    }
+    
+    handleParticle(value){ // repearting Particle update and draw function in every frame so Particle can animate
+    this.connect(value);
+        for(let i = 0; i < this.particleHolder.length ; i++){
+            this.particleHolder[i].draw(value)
+            this.particleHolder[i].update() ;
+            if(this.particleHolder[i].opacity < 0.1){
+                this.particleHolder.splice(i, 1)
+            }
+            
+        }
+        
+    }
+    
+    connect(c){ // adding line to one Particle to another particle
+        const maxDist = 100;
+        
+        for(let a = 0; a < this.particleHolder.length; a++){
+            for(let b = a; b < this.particleHolder.length ; b++){
+                let dy = this.particleHolder[a].y - this.particleHolder[b].y;
+                let dx = this.particleHolder[a].x - this.particleHolder[b].x;
+                let dist = Math.hypot(dx, dy);
+                if(dist < maxDist ){
+                
+                    c.save()
+                    let opacity = 1 - (dist/maxDist)
+                    c.globalAlpha = opacity 
+                    c.beginPath();
+                    c.strokeStyle = this.particleHolder[a].style
+                    c.moveTo(this.particleHolder[a].x, this.particleHolder[a].y)
+                    c.lineTo(this.particleHolder[b].x, this.particleHolder[b].y)
+                    ctx.stroke();
+                    c.restore()
+                }
+                
+                
+            }
+        }
+    }
+}
+let touchStarted = false;
+
+let effect = new Effect(canvas);
+let histry = [];
+histry.push(effect.particleCount)
+let speed = 10;
+let vx = 3;
+let vy = 3;
+
+function createdBySword(){ // repearting animation loop
+    ctx.clearRect(0,0,canvas.width, canvas.height )
+    effect.handleParticle(ctx)
+    
+ 
+   // ctx.fillText(effect.particleHolder.length , 100,100)
+    
+    if(!touchStarted){
+        mouseShape()
+    }
+    
+    
+    requestAnimationFrame(createdBySword)
+    
+}
+
+
+createdBySword()
+
+
+
+function mouseShape(){
+    if(mouse.x == 50 && mouse.y == 100){
+        vx = speed;
+        vy = 0
+    }
+    if(mouse.x == 350 && mouse.y == 100){
+        vx = 0;
+        vy = speed;
+    }
+    if(mouse.x == 350 && mouse.y == 700){
+        vx = -speed;
+        vy = 0
+    }
+    if(mouse.x == 50 && mouse.y == 700){
+        vx = 0;
+        vy = -speed;
+    }
+    
+    mouse.x += vx;
+    mouse.y += vy;
+    effect.createParticle()
+}
+
+        function handleTouch(event) {
+//giving touch position
+            
+            mouse.x = event.touches[0].clientX;
+            mouse.y = event.touches[0].clientY;
+            touchStarted = true;
+            effect.createParticle()
+            
+        }
+        
+        
+
+        window.addEventListener("touchstart", handleTouch);
+        window.addEventListener("touchmove", handleTouch);
+        
+        
+        if(canvas.height < 810){
+            alert("restart the code")
+        } 
+}
+</script>
+
+</html>
