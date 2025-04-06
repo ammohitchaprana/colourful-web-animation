@@ -1,6 +1,6 @@
 **README.md**
 
-# Colourful Web Animation
+# Colourful Web Animation by Liveupx.com
 
 ![Colorful Web Animation](animation-preview.gif)
 
