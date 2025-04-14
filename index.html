@@ -24,8 +24,10 @@ body {
     
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
-canvas.height = window.innerHeight;//height
-canvas.width = window.innerWidth;// width
+canvas.height = window.innerHeight;
+      //height
+canvas.width = window.innerWidth;
+      // width
 
 // finger move tracker
 let mouse ={
@@ -63,7 +65,8 @@ class Particle{
         this.x += this.vx; // moveing Particle on x axis
         this.y += this.vy; // moving Particle on y axis
          
-         if(this.x < this.r){ /// function for checking if Particle is going outside of canvas
+         if(this.x < this.r){ 
+             /// function for checking if Particle is going outside of canvas
              this.x = this.r;
              this.vx *= -1;
          }else if(this.x > canvas.width - this.r){
@@ -213,3 +216,4 @@ function mouseShape(){
 }
 </script>
 </html>
+<!-- by Liveupx -->
